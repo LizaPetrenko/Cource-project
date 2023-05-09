@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<link href="style.css" rel="stylesheet" type="text/css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIPMEMORY</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+</head>
+
+<body>
+    <div>
+        <nav class="formMenu">
+            <img id="logoImage" src="images/logo.png">
+            <ul>
+                <li><a href="#" class="hover-underline-animation" id="myDecks"> My Decks </span></a></li>
+                <li><a href="#" class="hover-underline-animation" id="about"> About </span></a></li>
+                <li><a href="#" class="hover-underline-animation" id="contact"> Contact </span></a></li>
+            </ul>
+            <img src="images/User.png" onclick="toggleMenu()">
+
+            <div class="sub_menu_wrap" id="subMenu">
+                <div class="sub_menu">
+                    <div class="user_info">
+                        <a href="#">
+                            <h3 id="profileName">User123</h3>
+                        </a>
+                    </div>
+
+
+                    <hr>
+
+
+                    <a href="" class="sub_menu_link">
+                        <!-- <img src="../images/User.png"> add picture in directory -->
+                        <p>Log out</p>
+                        <span><!-- <img src="angle.png">--></span>
+
+                    </a>
+
+
+                </div>
+
+            </div>
+        </nav>
+    </div>
+
+    <div class="mainContent" id="content">
+        <p class="mainContent" id="welcomeText">WELCOME TO</p>
+        <h1 class="mainContent" id="logoText"> FLIP MEMORY</h1>
+        <p class="mainContent" id="startText">Ready to Start?</p>
+        <button class="btn" id="getStartedButton">Get Started</button>
+
+    </div>
+
+
+    <div class="custom-loader"></div>
+
+
+    <script>
+        let subMenu = document.getElementById("subMenu")
+
+
+
+        // toggleMenu when click on profile image
+        function toggleMenu() {
+            subMenu.classList.toggle("open_menu");
+        }
+
+        // Start learning when click on button Get Started
+        $(document).ready(function() {
+            $('#getStartedButton').click(function() {
+                $.ajax({
+                    url: 'getStarted.html',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#content').html(response);
+                    }
+                });
+            });
+        });
+
+        //Home page when click on Logo
+        $('#logoImage').click(function() {
+            window.location.href = 'index.html';
+        });
+
+        //My Decks page when click on My Decks
+        $(document).ready(function() {
+            $('#myDecks').click(function() {
+                $.ajax({
+                    url: 'myDecksPage.html',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#content').html(response);
+                    }
+                });
+            });
+        });
+
+        //About page when click on About
+        $(document).ready(function() {
+            $('#about').click(function() {
+                $.ajax({
+                    url: 'aboutPage.html',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#content').html(response);
+                    }
+                });
+            });
+        });
+
+        //Profile page when click on Profile
+        $(document).ready(function() {
+            $('#profileName').click(function() {
+                toggleMenu(); // close subMenu
+                $.ajax({
+                    url: 'profilePage.html',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#content').html(response);
+                    }
+                });
+            });
+        });
+
+        //Contact page when click on Contact
+        $(document).ready(function() {
+            $('#contact').click(function() {
+                $.ajax({
+                    url: 'contactPage.html',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#content').html(response);
+                    }
+                });
+            });
+        });
+        //Logout when click on Logout
+        $(document).ready(function() {
+            $('.sub_menu_link').click(function() {
+                toggleMenu(); // close subMenu
+                // do logout
+            });
+        });
+
+
+
+
+
+        //Loader
+        $(window).on('load', function() {
+            $(".custom-loader").fadeOut("slow");
+        });
+    </script>
+    <style></style>
+
+
+
+</body>
+
+
+
+
+</html>

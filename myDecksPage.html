@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Decks</title>
+</head>
+
+<body>
+    <div class="mainContent" id="createNewDeck">
+
+
+        <div class="mainHeader">
+            <h1 id="myDeckHeader">My Decks</h1>
+            <div class="line"></div>
+        </div>
+
+
+        <h1 id="messageNoDeckYet">Apparently, you have<br> no deck yet...</h1>
+        <div id="deckWrapper">
+
+            <button class="btnWoSp" id="plusButton">+</button>
+        </div>
+
+        <p id="createNewDeckClue">tap above to create new collection</p>
+
+        <ul id="deckList"></ul>
+        <!-- <button class="btnWoSp" id="plusButton2" style="display: none">plusButton2</button> -->
+        <!-- <button class="btnWoSp" id="createNewDeckButton" style="display: none">Create New Deck</button> -->
+
+        <!-- добавить новые карточки к колоде -->
+
+        <div class="modal" id="createDeckModal">
+
+
+            <form>
+                <div>
+                    <input class="inputNewDeck" type="text" id="deckName" placeholder="Name your new deck ...">
+                    <div id="cardFields" style="display: none">
+                        <h2 id="deckTitle"></h2>
+                        <input class="inputNewDeck" type="text" id="word" placeholder="write the word ...">
+                        <input class="inputNewDeck" type="text" id="translation" placeholder="write the meaning ...">
+                        <textarea class="inputNewDeck" id="addInfo" placeholder="write an additional information ..."></textarea>
+                    </div>
+                    <button class="btnWoSp" type="submit" id="nextButton">Next</button>
+                    <button class="btnWoSp" type="submit" style="display: none;" id="createButton">Create card</button>
+
+
+                    <button class="btnWoSp" type="submit" style="display: none;" id="doneButton">Done</button>
+
+                </div>
+            </form>
+
+        </div>
+        <!-- card - announcce 
+        plusButton1 - plusButton -->
+        <script>
+            const createDeckButton = document.getElementById("plusButton");
+            const createDeckModal = document.getElementById("createDeckModal");
+            const messageNoDeckYet = document.getElementById("messageNoDeckYet");
+            const createNewDeckClue = document.getElementById("createNewDeckClue");
+            const deckTitle = document.getElementById("deckTitle");
+            const deckNameInput = document.getElementById("deckName");
+            const wordInput = document.getElementById("word");
+            const translationInput = document.getElementById("translation");
+            const addInfoInput = document.getElementById("addInfo");
+            const deckWrapper = document.getElementById("deckWrapper");
+            const form = createDeckModal.querySelector("form");
+            const deckList = document.getElementById("deckList");
+
+            // const createNewDeckButton = document.getElementById("createNewDeckButton");
+            const createButton = document.getElementById("createButton");
+            const doneButton = document.getElementById("doneButton");
+            const modal = document.querySelector(".modal");
+
+            const inputs = [wordInput, translationInput, addInfoInput];
+            let cards = [];
+
+
+            //створюємо лістенер на кнопку "+" - відкривається вікно створення колоди з картами, 
+            //закривається вікно пропозиції створити першу нову колоду.
+            //
+
+            createDeckButton.addEventListener("click", () => {
+
+                createDeckModal.style.display = "block";
+                deckNameInput.value = "";
+                wordInput.value = "";
+                translationInput.value = "";
+                addInfoInput.value = "";
+                deckTitle.textContent = "";
+                deckNameInput.focus();
+                cardCount = 1;
+
+            });
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const deckName = deckNameInput.value; //запам'ятовуємо введену назву колоди
+
+                if (!deckName) {
+                    return;
+                }
+
+                deckTitle.textContent = deckName; //створюємо заголовок у куті вікна створення нової картки
+
+                //слідкуємо, щоб назва не вилазила за границі вікна
+                const deckNameLength = deckName.length;
+                if (deckNameLength <= 9) {
+                    deckTitle.style.width = "100px";
+                } else if (deckNameLength > 9 && deckNameLength < 20) {
+                    deckTitle.style.width = deckNameLength * 10 + "px";
+                } else {
+                    deckTitle.style.width = "200px";
+                }
+
+                deckNameInput.value = "";
+                deckNameInput.style.display = "none";
+
+                showCardFields();
+                wordInput.focus();
+            });
+
+            // //показуємо інші поля для введення
+            function showCardFields() {
+                const nextButton = document.getElementById("nextButton");
+                const createButton = document.getElementById("createButton");
+
+                nextButton.style.display = "none";
+                createButton.style.display = "inline-block";
+                cardFields.style.display = "block";
+            }
+
+            let boxShadowValues = [];
+            let createCardCount = 0;
+
+
+
+            createButton.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                const deckName = deckTitle.textContent;
+                const word = wordInput.value;
+                const translation = translationInput.value;
+                const addInfo = addInfoInput.value;
+                const boxShadowValue = `rgba(255, 255, 255, 0.5) -${boxShadowValues.length * 5 + 5}px ${boxShadowValues.length * 3 + 3}px`;
+
+
+
+
+                if (!deckName) {
+                    return;
+                }
+
+                if (!word || !translation) { // проверка на пустые поля
+                    return;
+                }
+
+
+                cardCount++;
+                if (cardCount > 1) {
+                    doneButton.style.display = "inline-block";
+                }
+
+                cards.push({
+                    word,
+                    translation,
+                    addInfo
+                });
+
+                // Clear input fields
+                inputs.forEach((input) => (input.value = ""));
+                wordInput.focus();
+                //перевіряємо кількість створених карток для того, щоб коли створюються імітації вже створених раніше карток не було нагромадження
+                //тобто максимум візуально буде видно 5 "карток" у колоді, хоча насправді їх може бути і більше
+
+                if (createCardCount >= 4) {
+                    modal.style.boxShadow = boxShadowValues.join(", ");
+                    return;
+                }
+                //змінюємо стиль модалу(додаємо імітацію карточки під поточною)
+                boxShadowValues.push(boxShadowValue);
+                modal.style.boxShadow = boxShadowValues.join(", ");
+                createCardCount++;
+
+
+            });
+
+
+
+            doneButton.addEventListener("click", (event) => {
+                event.preventDefault();
+                const deckName = deckTitle.textContent;
+                const listItems = cards
+                    .map(
+                        (card) =>
+                        `<li ><strong>Word:</strong> ${card.word}</li><li><strong>Translation:</strong> ${card.translation}</li><li><strong>Add. Info:</strong> ${card.addInfo}</li>`
+                    )
+                    .join("");
+
+                const deckItem = `
+                    <div id="deckItem">
+
+                        <p id="percents"0%</p> 
+                        <h2 id="nameDeckMyDecks">${deckName}</h2>
+                        <button class="btnWoSp" type="submit" id="startButton">Start</button>
+
+                    </div>
+                `; //<ul>${listItems}</ul> <button class="simpleButton" type="submit" id="addCardsButton">...</button>
+                deckList.insertAdjacentHTML("beforeend", deckItem);
+
+                // Reset card data and hide card fields 
+                cards = [];
+
+                createDeckModal.style.display = "none";
+                messageNoDeckYet.style.display = "none";
+                createNewDeckClue.style.display = "none";
+                createDeckButton.style.display = "block";
+            });
+        </script>
+
+
+    </div>
+</body>
+
+</html>
